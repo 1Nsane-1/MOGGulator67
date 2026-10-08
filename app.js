@@ -24,6 +24,13 @@ function str(n,tg,top=true){switch(n.t){
   case'par':return'('+str(n.e,tg,true)+')';
   case'bin':{const o=n.op=='*'?'×':n.op=='/'?'÷':n.op=='-'?'−':n.op;
     const t=str(n.l,tg,false)+' '+o+' '+str(n.r,tg,false);return n==tg?'<mark>'+t+'</mark>':t}}}
+function tex(n,tg,top=true){let r;switch(n.t){
+  case'num':{const t=fmt(n.v);r=n.v<0&&!top?'\\left('+t+'\\right)':t;break}
+  case'neg':r='-'+tex(n.e,tg,false);break;
+  case'par':r='\\left('+tex(n.e,tg,true)+'\\right)';break;
+  case'bin':{const dv=n.op=='/',un=y=>dv&&y.t=='par'?y.e:y,l=tex(un(n.l),tg,dv),q=tex(un(n.r),tg,dv||n.op=='^');
+    r=dv?`\\frac{${l}}{${q}}`:n.op=='^'?`${l}^{${q}}`:`${l} ${n.op=='*'?'\\cdot':n.op} ${q}`;break}}
+  return n==tg?`\\htmlClass{hl}{${r}}`:r}
 function calc1(op,a,b){switch(op){case'+':return a+b;case'-':return a-b;case'*':return a*b;
   case'/':if(b==0)throw new Error('Деление на ноль');return a/b;
   case'^':{const r=Math.pow(a,b);if(!isFinite(r)||isNaN(r))throw new Error('Невозможно вычислить степень');return r}}}
@@ -36,10 +43,10 @@ function solve(src){
     if(!c.length||++g>200)throw new Error('Не удалось разобрать выражение');
     c.sort((a,b)=>b.d-a.d||b.p-a.p||a.k-b.k);
     const {n}=c[0],a=n.l.v,b=n.r.v,r=calc1(n.op,a,b);
-    const before=str(tree,n),note=`${OPN[n.op]}: ${fmt(a)} ${n.op=='*'?'×':n.op=='/'?'÷':n.op=='-'?'−':n.op} ${fmt(b)} = ${fmt(r)}`+(c[0].d?' (внутри скобок)':'');
+    const before=str(tree,n),bt=tex(tree,n),note=`${OPN[n.op]}: ${fmt(a)} ${n.op=='*'?'×':n.op=='/'?'÷':n.op=='-'?'−':n.op} ${fmt(b)} = ${fmt(r)}`+(c[0].d?' (внутри скобок)':'');
     Object.keys(n).forEach(x=>delete n[x]);Object.assign(n,{t:'num',v:r});
-    tree=simp(tree);steps.push({before,note,after:str(tree,null)});}
-  return{steps,res:tree.v,start:str(simp(parse(src)),null)}}
+    tree=simp(tree);steps.push({before,bt,note,after:str(tree,null),at:tex(tree,null)});}
+  return{steps,res:tree.v,start:str(simp(parse(src)),null),st:tex(simp(parse(src)),null)}}
 // ---------- История ----------
 let H=[];try{H=JSON.parse(localStorage.getItem('mogg67')||'[]')}catch(e){}
 const save=()=>{try{localStorage.setItem('mogg67',JSON.stringify(H))}catch(e){}};
@@ -49,11 +56,11 @@ $('hclr').onclick=()=>{stat('hclr');H=[];save();drawH()};
 // ---------- Запуск ----------
 function run(){
   const o=$('out');try{
-    const s=norm($('expr').value);if(/[A-Za-zА-Яа-я_]/.test(s))throw new Error('В выражении есть переменные ('+(s.match(/[A-Za-zА-Яа-я_]/g).join(', '))+'). Решатель считает только числа — подставь значения, например n=4, m=3.');const {steps,res,start}=solve(s);
+    const s=norm($('expr').value);if(/[A-Za-zА-Яа-я_]/.test(s))throw new Error('В выражении есть переменные ('+(s.match(/[A-Za-zА-Яа-я_]/g).join(', '))+'). Решатель считает только числа — подставь значения, например n=4, m=3.');const {steps,res,start,st}=solve(s);
     o.innerHTML=`<div class="st"><small>Исходное выражение</small><div class="ex">${start}</div></div>`+
       (steps.length?steps.map((x,i)=>`<div class="st"><small>Шаг ${i+1}. ${x.note}</small><div class="ex">${x.before}</div><div class="ex">→ ${x.after}</div></div>`).join(''):'<div class="st"><small>Вычислять нечего — это уже число</small></div>')+
       `<div class="ans">Ответ: ${fmt(res)}</div>`;
-    H=[{e:s,r:fmt(res)},...H.filter(h=>h.e!=s)].slice(0,30);save();drawH();stat('solved');track(s,steps,res);
+    if(window.katex)kview(o,{steps,res,st});H=[{e:s,r:fmt(res)},...H.filter(h=>h.e!=s)].slice(0,30);save();drawH();stat('solved');track(s,steps,res);
   }catch(e){stat('err');if(e.message=='Деление на ноль')stat('dz');o.innerHTML=`<p class="err">⚠ ${e.message}</p>`}}
 $('calc').onclick=run;$('expr').onkeydown=e=>{if(e.key=='Enter')run()};
 $('clr').onclick=()=>{$('expr').value='';$('out').innerHTML=''};
@@ -102,7 +109,7 @@ const AL=[
 ['photo',1,'Первое фото примера'],['photo',5,'Фотограф: 5 снимков'],['ocr',1,'Запустил OCR'],
 ['hre',1,'Вернулся к старому примеру'],['hclr',1,'Чистая история'],
 ['note',1,'Первая заметка'],['note',5,'Блокнотный человек: 5 заметок'],['notes',10,'10 заметок одновременно'],
-['cmp',1,'Компас включён'],['geo',1,'Нашёл себя на карте'],['wx',1,'Узнал погоду у себя'],['auth',1,'Завёл аккаунт'],['msg',1,'Первое сообщение в чате'],['msg',25,'Болтун: 25 сообщений'],['route',1,'Проложил маршрут'],
+['cmp',1,'Компас включён'],['geo',1,'Нашёл себя на карте'],['wx',1,'Узнал погоду у себя'],['ai',1,'Спросил ИИ-ассистента'],['ai',10,'Ученик ИИ: 10 вопросов'],['aisolve',1,'ИИ решил задачу по фото'],['auth',1,'Завёл аккаунт'],['msg',1,'Первое сообщение в чате'],['msg',25,'Болтун: 25 сообщений'],['route',1,'Проложил маршрут'],
 ['rec',1,'Первая запись диктофона'],['rec',5,'Подкастер: 5 записей'],
 ['sw',1,'Запустил секундомер'],['alarm',1,'Поставил будильник'],
 ['rnd',1,'Первый рандом'],['rnd',5,'5 бросков судьбы'],['rnd',25,'Игрок в кости: 25 бросков'],['rq',1,'Случайный пример'],['rq',10,'Генератор пыток: 10 примеров'],
@@ -187,6 +194,32 @@ async function sendMsg(){const t=$('ci').value.trim();if(!t)return;try{await pos
 $('cs').onclick=sendMsg;$('ci').onkeydown=e=>{if(e.key=='Enter')sendMsg()};
 setInterval(()=>{if(document.querySelector('section[data-t=chat]').classList.contains('on'))pull()},3000);
 loadMe();
+// Photomath-стиль: KaTeX + решение с ИИ + ассистент
+function renderMath(o,trust){o.querySelectorAll('.mth').forEach(e=>{const t=decodeURIComponent(e.dataset.t);try{katex.render(t,e,{displayMode:true,throwOnError:false,trust})}catch(_){e.textContent=t}})}
+const mth=t=>`<div class="mth" data-t="${encodeURIComponent(t)}"></div>`;
+const esc=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const card=(i,note,body)=>`<div class="stc"><div class="num">${i}</div><div class="stb"><div class="note">${note}</div>${body}</div></div>`;
+function kview(o,{steps,res,st}){o.innerHTML=`<div class="st"><small>Задача</small>${mth(st)}</div>`+
+ steps.map((x,i)=>card(i+1,x.note,mth(x.bt)+'<div class="arr">⬇</div>'+mth(x.at))).join('')+`<div class="ans2">Ответ</div>${mth('\\boxed{'+fmt(res)+'}')}`;renderMath(o,true)}
+function kai(o,d){o.innerHTML=`<div class="st"><small>Задача (распознано ИИ)</small>${mth(d.problem)}</div>`+
+ d.steps.map((x,i)=>card(i+1,esc(x.explain),mth(x.math))).join('')+`<div class="ans2">Ответ</div>${mth('\\boxed{'+d.answer+'}')}`;renderMath(o,false)}
+const imgB64=f=>new Promise(res=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);
+ const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.85))};im.src=URL.createObjectURL(f)});
+$('aisolve').onclick=async()=>{const o=$('out'),b=$('aisolve');
+ if(!me){o.innerHTML='<p class="err">Войди в аккаунт во вкладке «Чат», чтобы пользоваться ИИ.</p>';return}
+ b.disabled=true;o.innerHTML='<p style="color:var(--mut)">ИИ решает… (до 30 секунд)</p>';
+ try{const body={text:$('expr').value.trim()};if(img)body.image=await imgB64(img);kai(o,await post('/api/solve',body));stat('aisolve')}
+ catch(e){o.innerHTML=`<p class="err">⚠ ${esc(e.message)}</p>`}b.disabled=false};
+function rich(t){return t.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g).map(p=>{const d=p.startsWith('$$'),m=d||(p.length>1&&p[0]=='$'&&p.endsWith('$'));
+ if(m&&window.katex){try{return katex.renderToString(p.slice(d?2:1,d?-2:-1),{displayMode:d,throwOnError:false})}catch(e){}}return esc(p).replace(/\n/g,'<br>')}).join('')}
+const AIH=[];
+function aiAdd(role,text){const d=document.createElement('div');d.className='m'+(role=='user'?' me':'');d.innerHTML=`<b>${role=='user'?'Ты':'🤖'}:</b> `+rich(text);$('aiL').append(d);$('aiL').scrollTop=$('aiL').scrollHeight}
+async function aiSend(){const t=$('aiI').value.trim();if(!t)return;
+ if(!me){aiAdd('assistant','Войди в аккаунт во вкладке «Чат», чтобы пользоваться ИИ.');return}
+ $('aiI').value='';aiAdd('user',t);AIH.push({role:'user',content:t});$('aiS').disabled=true;
+ try{const d=await post('/api/assistant',{messages:AIH.slice(-12)});AIH.push({role:'assistant',content:d.reply});aiAdd('assistant',d.reply);stat('ai')}
+ catch(e){AIH.pop();aiAdd('assistant','⚠ '+e.message)}$('aiS').disabled=false}
+$('aiS').onclick=aiSend;$('aiI').onkeydown=e=>{if(e.key=='Enter')aiSend()};
 function track(s,st,res){stat('steps',st.length);const m={add:/\+/,sub:/-/,mul:/\*/,div:/\//,pow:/\^/,par:/\(/};
  for(const k in m)if(m[k].test(s))stat(k);if(/^-|[(*\/^+-]-/.test(s))stat('neg');if(/\d\.\d/.test(s))stat('dec');
  if(res<0)stat('negr');if(res===0)stat('zero');if(Math.abs(res)>=1000)stat('big');if(res===67)stat('sixseven')}

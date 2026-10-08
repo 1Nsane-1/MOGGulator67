@@ -26,3 +26,7 @@ a{color:var(--ac)}.ach{padding:6px 0;color:var(--mut)}.ach.ok{color:var(--tx);fo
 input[type=password].s{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
 #cl{height:320px;overflow-y:auto;border:1px solid var(--bd);border-radius:10px;padding:8px;margin-bottom:8px;background:var(--bg)}
 .m{padding:3px 0;word-break:break-word}.m b{color:var(--mut)}.m.me b{color:var(--ac)}.m small{color:var(--mut);margin-left:6px}
+#aiL{height:320px;overflow-y:auto;border:1px solid var(--bd);border-radius:10px;padding:8px;margin-bottom:8px;background:var(--bg)}
+.mth{overflow-x:auto;overflow-y:hidden;padding:4px 0;text-align:center;font-size:1.15em}.hl{background:var(--hl);border-radius:6px;padding:0 4px}
+.stc{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--bd)}.num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ac);color:#fff;text-align:center;line-height:28px;font-weight:700}
+.stb{flex:1;min-width:0}.note{color:var(--mut);margin-bottom:4px}.arr{text-align:center;color:var(--ac)}.ans2{margin-top:14px;font-weight:700;color:var(--ac)}

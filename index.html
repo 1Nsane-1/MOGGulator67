@@ -2,6 +2,7 @@
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MOGGулятор67</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <link rel="stylesheet" href="style.css">
 </head><body><main>
 <h1>MOGG<span>улятор</span>67</h1>
@@ -17,7 +18,7 @@
 
 <div class="card"><h2>2. Выражение</h2>
 <input id="expr" type="text" placeholder="например: (2+3)*4^2 - 10/5" autocomplete="off" spellcheck="false">
-<div class="row"><button id="calc">Решить</button><button class="g" id="clr">Очистить</button></div>
+<div class="row"><button id="calc">Решить</button><button id="aisolve">✨ Решить с ИИ</button><button class="g" id="clr">Очистить</button></div>
 <div id="out"></div></div>
 
 <div class="card"><h2>История</h2><div id="hist"></div>
@@ -44,8 +45,12 @@
 <div class="row"><button id="clog">Войти</button><button class="g" id="creg">Зарегистрироваться</button></div><p class="err" id="cerr"></p></div>
 <div class="card" id="cbox" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px"><span>Ты: <b id="cwho"></b></span><button class="g" id="cout">Выйти</button></div>
 <div id="cl"></div><div class="row"><input type="text" class="s" id="ci" maxlength="500" placeholder="Сообщение…" style="flex:1;min-width:0"><button id="cs">Отправить</button></div></div></section>
+<section data-t="ai" data-n="🤖 Ассистент"><div class="card"><h2>ИИ-ассистент</h2>
+<p style="color:var(--mut);margin-top:0">Спрашивай про математику и учёбу. Нужен вход через вкладку «Чат».</p>
+<div id="aiL"></div><div class="row"><input type="text" class="s" id="aiI" maxlength="500" placeholder="Например: объясни, как решать дробные уравнения" style="flex:1;min-width:0"><button id="aiS">Спросить</button></div></div></section>
 <section data-t="ach" data-n="🏆 Достижения"><div class="card"><h2>Профиль</h2><input type="text" class="s" id="nick" placeholder="Никнейм (хранится только у тебя в браузере)"><div id="al" style="margin-top:12px"></div></div></section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="app.js"></script>
 </body></html>

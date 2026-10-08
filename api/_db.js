@@ -24,6 +24,7 @@ async function init() {
       await sql`CREATE TABLE IF NOT EXISTS messages (
         id SERIAL PRIMARY KEY, user_id INT REFERENCES users(id), nick TEXT NOT NULL,
         text TEXT NOT NULL, created_at TIMESTAMPTZ DEFAULT now())`;
+      await sql`CREATE TABLE IF NOT EXISTS ai_log (user_id INT, created_at TIMESTAMPTZ DEFAULT now())`;
     })();
     ready.catch(() => { ready = null; });
   }

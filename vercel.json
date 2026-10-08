@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "api/assistant.js": { "maxDuration": 60 },
+    "api/solve.js": { "maxDuration": 60 }
+  }
+}

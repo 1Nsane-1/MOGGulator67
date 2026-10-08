@@ -16,4 +16,4 @@ OCR читает печатный текст в строку. Дроби «в д
 - `api/auth.js`, `api/messages.js` — аккаунты (ник + пароль, bcrypt, JWT в cookie) и общий чат (опрос раз в 3 с).
 - Переменные окружения: `DATABASE_URL` (Neon Postgres через Vercel Storage), `JWT_SECRET` (случайная строка).
 - Локально: `npm install`, затем `npx vercel dev`.
-  https://moggulator67.vercel.app
+  Ссылка https://moggulator67.vercel.app

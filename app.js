@@ -109,7 +109,7 @@ const AL=[
 ['photo',1,'Первое фото примера'],['photo',5,'Фотограф: 5 снимков'],['ocr',1,'Запустил OCR'],
 ['hre',1,'Вернулся к старому примеру'],['hclr',1,'Чистая история'],
 ['note',1,'Первая заметка'],['note',5,'Блокнотный человек: 5 заметок'],['notes',10,'10 заметок одновременно'],
-['cmp',1,'Компас включён'],['geo',1,'Нашёл себя на карте'],['wx',1,'Узнал погоду у себя'],['ai',1,'Спросил ИИ-ассистента'],['ai',10,'Ученик ИИ: 10 вопросов'],['aisolve',1,'ИИ решил задачу по фото'],['auth',1,'Завёл аккаунт'],['msg',1,'Первое сообщение в чате'],['msg',25,'Болтун: 25 сообщений'],['route',1,'Проложил маршрут'],
+['cmp',1,'Компас включён'],['geo',1,'Нашёл себя на карте'],['wx',1,'Узнал погоду у себя'],['ai',1,'Спросил ИИ-ассистента'],['ai',10,'Ученик ИИ: 10 вопросов'],['aisolve',1,'ИИ решил задачу по фото'],['donate',1,'Щедрая душа: заглянул на донаты'],['radio',1,'Включил радио'],['radio',5,'Меломан: 5 станций'],['map',1,'Нашёл место на карте'],['route2',1,'Построил маршрут на карте'],['chess',1,'Сыграл партию в шахматы'],['chesswin',1,'Обыграл компьютер'],['sync',1,'Облако: данные в аккаунте'],['theme',1,'Сменил тему'],['pwa',1,'Установил приложение'],['auth',1,'Завёл аккаунт'],['msg',1,'Первое сообщение в чате'],['msg',25,'Болтун: 25 сообщений'],['route',1,'Проложил маршрут'],
 ['rec',1,'Первая запись диктофона'],['rec',5,'Подкастер: 5 записей'],
 ['sw',1,'Запустил секундомер'],['alarm',1,'Поставил будильник'],
 ['rnd',1,'Первый рандом'],['rnd',5,'5 бросков судьбы'],['rnd',25,'Игрок в кости: 25 бросков'],['rq',1,'Случайный пример'],['rq',10,'Генератор пыток: 10 примеров'],
@@ -117,8 +117,10 @@ const AL=[
 ['tabs',3,'Исследователь: 3 вкладки'],['tabs',6,'Видел всё: все вкладки'],
 ['nick',1,'Придумал никнейм'],['days',2,'Вернулся на второй день'],['days',7,'Неделя с MOGGулятором'],
 ['night',1,'Сова: решал ночью'],['early',1,'Жаворонок: решал рано утром']];
-function stat(k,v){S[k]=v===undefined?(S[k]||0)+1:Math.max(S[k]||0,v);sv('m67s',S);drawA()}
-function drawA(){const n=AL.filter(([k,n])=>(S[k]||0)>=n).length;$('al').innerHTML=`<b>Открыто ${n} из ${AL.length}</b>`+AL.map(([k,n,t])=>{const ok=(S[k]||0)>=n;return`<div class="ach ${ok?'ok':''}">${ok?'🏆':'🔒'} ${t}</div>`}).join('')}
+function stat(k,v){const o=S[k]||0;S[k]=v===undefined?o+1:Math.max(o,v);sv('m67s',S);AL.forEach(([a,n,t])=>{if(a==k&&o<n&&S[k]>=n)toast('🏆 '+t)});drawA();cloudPush()}
+function drawA(){const n=AL.filter(([k,m])=>(S[k]||0)>=m).length;
+ $('al').innerHTML=`<b>Открыто ${n} из ${AL.length}</b><div class="ag">`+AL.map(([k,m,t])=>{const v=Math.min(S[k]||0,m),ok=v>=m;
+ return`<div class="ac${ok?' ok':''}"><div>${ok?'🏆':'🔒'} ${t}</div>${ok?'':`<div class="pb2"><i style="width:${v/m*100}%"></i></div><small>${v}/${m}</small>`}</div>`}).join('')+'</div>'}
 $('nick').value=ld('m67n','');$('nick').oninput=e=>{sv('m67n',e.target.value);if(e.target.value.trim())stat('nick')};
 // вкладки
 const secs=[...document.querySelectorAll('section')];
@@ -172,18 +174,19 @@ let mr=null,ch=[];$('rec').onclick=async()=>{if(mr){mr.stop();return}try{
 // заметки
 let N=ld('m67nt',[]);function drawN(){$('nl').innerHTML=N.map((t,i)=>`<div class="h" data-i="${i}"><span style="white-space:pre-wrap;font-family:inherit">${t.replace(/[<>&]/g,'')}</span><span>✕</span></div>`).join('')}
 $('nadd').onclick=()=>{const t=$('nt').value.trim();if(!t)return;N.unshift(t);sv('m67nt',N);$('nt').value='';drawN();stat('note');stat('notes',N.length)};
-$('nl').onclick=e=>{const d=e.target.closest('.h');if(d){N.splice(d.dataset.i,1);sv('m67nt',N);drawN()}};
+$('nl').onclick=e=>{const d=e.target.closest('.h');if(d){N.splice(d.dataset.i,1);sv('m67nt',N);drawN();cloudPush()}};
 // чат и аккаунты (серверные функции /api/auth и /api/messages)
 let me=null,lastId=0;
 async function api(p,o){const r=await fetch(p,o),d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Ошибка '+r.status);return d}
 const post=(p,b)=>api(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
-function chatUI(){$('cauth').style.display=me?'none':'block';$('cbox').style.display=me?'block':'none';if(me){$('cwho').textContent=me.nick;pull()}}
+function chatUI(){$('cauth').style.display=me?'none':'block';$('cbox').style.display=me?'block':'none';CLOUD=!!me;if(me){$('cwho').textContent=me.nick;pull();cloudPull()}}
 async function loadMe(){try{me=(await api('/api/auth?action=me')).user}catch(e){me=null}chatUI()}
 function authDo(a){$('cerr').textContent='';post('/api/auth?action='+a,{nick:$('cn').value.trim(),password:$('cpw').value})
  .then(d=>{me=d.user;lastId=0;$('cl').innerHTML='';$('cpw').value='';stat('auth');chatUI()}).catch(e=>$('cerr').textContent=e.message)}
 $('clog').onclick=()=>authDo('login');$('creg').onclick=()=>authDo('register');
 $('cpw').onkeydown=e=>{if(e.key=='Enter')authDo('login')};
-$('cout').onclick=async()=>{try{await post('/api/auth?action=logout',{})}catch(e){}me=null;lastId=0;$('cl').innerHTML='';chatUI()};
+$('cout').onclick=async()=>{try{if(CLOUD)await post('/api/sync',{data:{h:H,n:N,s:S}})}catch(e){}try{await post('/api/auth?action=logout',{})}catch(e){}
+ H=[];N=[];S={};sv('m67s',S);sv('m67nt',N);save();me=null;lastId=0;$('cl').innerHTML='';chatUI();drawH();drawN();drawA()};
 async function pull(){if(!me)return;try{const d=await api('/api/messages?after='+lastId),box=$('cl'),down=box.scrollTop+box.clientHeight>=box.scrollHeight-30||!lastId;
  d.messages.forEach(m=>{const el=document.createElement('div');el.className='m'+(m.nick==me.nick?' me':'');
   const b=document.createElement('b');b.textContent=m.nick+': ';const t=document.createElement('span');t.textContent=m.text;
@@ -220,9 +223,80 @@ async function aiSend(){const t=$('aiI').value.trim();if(!t)return;
  try{const d=await post('/api/assistant',{messages:AIH.slice(-12)});AIH.push({role:'assistant',content:d.reply});aiAdd('assistant',d.reply);stat('ai')}
  catch(e){AIH.pop();aiAdd('assistant','⚠ '+e.message)}$('aiS').disabled=false}
 $('aiS').onclick=aiSend;$('aiI').onkeydown=e=>{if(e.key=='Enter')aiSend()};
+// ---- облако, тема, PWA, тосты ----
+var CLOUD=false,cpT=null;
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),3200)}
+function cloudPush(){if(!CLOUD)return;clearTimeout(cpT);cpT=setTimeout(()=>post('/api/sync',{data:{h:H,n:N,s:S}}).catch(()=>{}),2000)}
+async function cloudPull(){try{const d=(await api('/api/sync')).data||{},seen=new Set();
+ H=[...H,...(d.h||[])].filter(x=>x&&!seen.has(x.e)&&seen.add(x.e)).slice(0,30);
+ N=[...new Set([...N,...(d.n||[])])];
+ for(const k of Object.keys(d.s||{})){const v=d.s[k];if(k=='dl'&&Array.isArray(v))S.dl=[...new Set([...(S.dl||[]),...v])];else if(typeof v=='number')S[k]=Math.max(S[k]||0,v)}
+ S.days=Math.max(S.days||0,(S.dl||[]).length);
+ sv('m67s',S);sv('m67nt',N);save();drawH();drawN();drawA();stat('sync',1)}catch(e){}}
+const curTheme=()=>document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+{const t=ld('m67t',null);if(t)document.documentElement.dataset.theme=t}
+$('thm').onclick=()=>{const n=curTheme()=='dark'?'light':'dark';document.documentElement.dataset.theme=n;sv('m67t',n);stat('theme')};
+$('don').onclick=()=>stat('donate');
+addEventListener('appinstalled',()=>stat('pwa'));
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+// ---- карта ----
+let map,mDest=null,mFrom=null,mMk={},rl=null,PL=[];
+function initMap(){if(map||!window.L)return;map=L.map('map').setView([30,10],2);
+ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+ map.on('click',e=>setPt('to',e.latlng.lat,e.latlng.lng,'Точка назначения'))}
+function setPt(w,la,lo,name){if(w=='to')mDest={la,lo};else mFrom={la,lo};if(mMk[w])map.removeLayer(mMk[w]);mMk[w]=L.marker([la,lo]).addTo(map).bindPopup(esc(name)).openPopup()}
+function pick(i){const p=PL[i];setPt('to',p.lat,p.lon,p.name.split(',')[0]);map.setView([p.lat,p.lon],14);stat('map')}
+$('mapGo').onclick=async()=>{const q=$('mapQ').value.trim();if(!q)return;initMap();if(!map){$('mapRes').textContent='Карта не загрузилась (проверь интернет)';return}
+ $('mapRes').textContent='Ищу…';try{PL=(await api('/api/maps?action=geocode&q='+encodeURIComponent(q))).places;
+  $('mapRes').innerHTML=PL.length?PL.map((p,i)=>`<div class="h" data-i="${i}"><span>${esc(p.name)}</span></div>`).join(''):'Ничего не найдено';if(PL.length)pick(0)}
+ catch(e){$('mapRes').textContent='⚠ '+e.message}};
+$('mapQ').onkeydown=e=>{if(e.key=='Enter')$('mapGo').click()};
+$('mapRes').onclick=e=>{const d=e.target.closest('.h');if(d)pick(+d.dataset.i)};
+$('mapMe').onclick=()=>{initMap();if(!map||!navigator.geolocation){$('mapInfo').textContent='Недоступно';return}
+ navigator.geolocation.getCurrentPosition(r=>{setPt('from',r.coords.latitude,r.coords.longitude,'Я здесь');map.setView([r.coords.latitude,r.coords.longitude],14)},()=>$('mapInfo').textContent='Нет доступа к геопозиции')};
+$('mapRt').onclick=async()=>{if(!mFrom||!mDest){$('mapInfo').textContent='Нужны обе точки: нажми «Я здесь» и выбери место назначения.';return}
+ $('mapInfo').textContent='Строю маршрут…';
+ try{const d=await api(`/api/maps?action=route&from=${mFrom.la},${mFrom.lo}&to=${mDest.la},${mDest.lo}&profile=${$('mapProf').value}`);
+  if(rl)map.removeLayer(rl);rl=L.polyline(d.coords,{weight:5}).addTo(map);map.fitBounds(rl.getBounds(),{padding:[20,20]});
+  $('mapInfo').innerHTML=`<b>${(d.distance/1000).toFixed(1)} км</b>, около ${Math.round(d.duration/60)} мин`;stat('route2')}
+ catch(e){$('mapInfo').textContent='⚠ '+e.message}};
+// ---- радио ----
+let ST=[];
+async function rdSearch(){const q=$('rdQ').value.trim()||'шансон';$('rdL').textContent='Ищу…';
+ try{ST=(await api('/api/radio?q='+encodeURIComponent(q))).stations;
+  $('rdL').innerHTML=ST.length?ST.map((s,i)=>`<div class="h" data-i="${i}"><span>${esc(s.name)}</span><small>${esc(s.country)}</small></div>`).join(''):'Ничего не найдено'}
+ catch(e){$('rdL').textContent='⚠ '+e.message+' (локально через Live Server /api не работает)'}}
+$('rdGo').onclick=rdSearch;$('rdQ').onkeydown=e=>{if(e.key=='Enter')rdSearch()};
+$('rdL').onclick=e=>{const d=e.target.closest('.h');if(!d)return;const s=ST[d.dataset.i],au=$('rau');au.src=s.url;au.play().catch(()=>{});$('rdNow').textContent='▶ '+s.name;stat('radio')};
+// ---- шахматы (правила — chess.js, ИИ — минимакс на 2 хода) ----
+let G=null,sel=null,vsAI=true;
+const GL={p:'♟\uFE0E',n:'♞\uFE0E',b:'♝\uFE0E',r:'♜\uFE0E',q:'♛\uFE0E',k:'♚\uFE0E'},VAL={p:1,n:3,b:3,r:5,q:9,k:0};
+function ev(){let s=0;for(const r of G.board())for(const p of r)if(p)s+=(p.color=='w'?1:-1)*VAL[p.type];return s}
+function mm(d,al,be,w){if(G.in_checkmate())return w?-1000-d:1000+d;if(G.in_draw()||G.in_stalemate())return 0;if(!d)return ev();
+ let best=w?-1e9:1e9;for(const m of G.moves()){G.move(m);const v=mm(d-1,al,be,!w);G.undo();
+  if(w){best=Math.max(best,v);al=Math.max(al,v)}else{best=Math.min(best,v);be=Math.min(be,v)}if(be<=al)break}return best}
+function aiMove(){if(!G||G.game_over())return;const w=G.turn()=='w';let bs=w?-1e9:1e9,bm=[];
+ for(const m of G.moves()){G.move(m);const v=mm(1,-1e9,1e9,!w);G.undo();if(w?v>bs:v<bs){bs=v;bm=[m]}else if(v==bs)bm.push(m)}
+ G.move(bm[Math.floor(Math.random()*bm.length)]);chDraw()}
+function chDraw(){const b=G.board(),lg=sel?G.moves({square:sel,verbose:true}).map(m=>m.to):[];let h='';
+ for(let r=0;r<8;r++)for(let f=0;f<8;f++){const sq='abcdefgh'[f]+(8-r),p=b[r][f];
+  h+=`<div class="sq ${(r+f)%2?'d':'l'}${sq==sel?' sel':''}${lg.includes(sq)?' lg':''}" data-s="${sq}">${p?`<span class="${p.color=='w'?'cw':'cb'}">${GL[p.type]}</span>`:''}</div>`}
+ $('chB').innerHTML=h;let t;
+ if(G.in_checkmate()){const win=G.turn()=='b'?'Белые':'Чёрные';t=`Мат! Победили ${win.toLowerCase()} 🎉`;stat('chess');if(vsAI&&G.turn()=='b')stat('chesswin')}
+ else if(G.game_over()){t='Ничья';stat('chess')}else t=(G.turn()=='w'?'Ход белых':'Ход чёрных')+(G.in_check()?' · шах!':'');
+ $('chSt').textContent=t}
+function chNew(){if(!window.Chess){$('chSt').textContent='Шахматный движок не загрузился (проверь интернет)';return}G=new Chess();sel=null;vsAI=$('chMode').value=='ai';chDraw()}
+$('chNew').onclick=chNew;$('chMode').onchange=chNew;
+$('chB').onclick=e=>{const s=e.target.closest('.sq')&&e.target.closest('.sq').dataset.s;if(!s||!G||G.game_over())return;
+ if(vsAI&&G.turn()!='w')return;
+ if(sel&&G.moves({square:sel,verbose:true}).some(m=>m.to==s)){G.move({from:sel,to:s,promotion:'q'});sel=null;chDraw();if(vsAI&&!G.game_over())setTimeout(aiMove,250);return}
+ const p=G.get(s);sel=p&&p.color==G.turn()?s:null;chDraw()};
+$('tabs').addEventListener('click',e=>{const t=e.target.dataset.t;
+ if(t=='map'){initMap();setTimeout(()=>map&&map.invalidateSize(),80)}
+ if(t=='radio'&&!ST.length)rdSearch();if(t=='chess'&&!G)chNew()});
 function track(s,st,res){stat('steps',st.length);const m={add:/\+/,sub:/-/,mul:/\*/,div:/\//,pow:/\^/,par:/\(/};
  for(const k in m)if(m[k].test(s))stat(k);if(/^-|[(*\/^+-]-/.test(s))stat('neg');if(/\d\.\d/.test(s))stat('dec');
  if(res<0)stat('negr');if(res===0)stat('zero');if(Math.abs(res)>=1000)stat('big');if(res===67)stat('sixseven')}
-{const d=new Date(),h=d.getHours();S.days=S.days||[];if(!S.days.includes(d.toDateString()))S.days.push(d.toDateString());stat('days',S.days.length);if(h<5)stat('night');else if(h<7)stat('early')}
+{if(Array.isArray(S.days)){S.dl=S.days;S.days=0}const d=new Date(),h=d.getHours();S.dl=S.dl||[];if(!S.dl.includes(d.toDateString()))S.dl.push(d.toDateString());stat('days',S.dl.length);if(h<5)stat('night');else if(h<7)stat('early')}
 drawN();drawA();
 drawH();

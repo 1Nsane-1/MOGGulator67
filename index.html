@@ -3,9 +3,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MOGGулятор67</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#6c4cf5">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head><body><main>
-<h1>MOGG<span>улятор</span>67</h1>
+<header class="top"><h1>MOGG<span>улятор</span>67</h1><div class="hb"><a class="btn" id="don" href="https://www.donationalerts.com/r/1nsane666_" target="_blank" rel="noopener">💜 Поддержать</a><button class="g" id="thm" title="Сменить тему">🌓</button></div></header>
 <p class="sub">Сфотографируй пример — получи ответ и пошаговое решение.</p>
 
 <nav id="tabs"></nav>
@@ -48,9 +52,19 @@
 <section data-t="ai" data-n="🤖 Ассистент"><div class="card"><h2>ИИ-ассистент</h2>
 <p style="color:var(--mut);margin-top:0">Спрашивай про математику и учёбу. Нужен вход через вкладку «Чат».</p>
 <div id="aiL"></div><div class="row"><input type="text" class="s" id="aiI" maxlength="500" placeholder="Например: объясни, как решать дробные уравнения" style="flex:1;min-width:0"><button id="aiS">Спросить</button></div></div></section>
+<section data-t="map" data-n="🗺 Карта"><div class="card"><div id="map"></div>
+<div class="row"><input type="text" class="s" id="mapQ" placeholder="Адрес или место" style="flex:1;min-width:0"><button id="mapGo">Найти</button></div>
+<div id="mapRes"></div>
+<div class="row"><button class="g" id="mapMe">📍 Я здесь</button><select id="mapProf" class="s"><option value="car">🚗 Авто</option><option value="foot">🚶 Пешком</option><option value="bike">🚲 Велосипед</option></select><button id="mapRt">Построить маршрут</button></div>
+<div id="mapInfo" style="margin-top:8px"></div><small style="color:var(--mut)">Клик по карте ставит точку назначения. © OpenStreetMap</small></div></section>
+<section data-t="radio" data-n="📻 Радио"><div class="card"><div class="row" style="margin-top:0"><input type="text" class="s" id="rdQ" value="шансон" style="flex:1;min-width:0"><button id="rdGo">Искать</button></div>
+<audio id="rau" controls style="width:100%;margin-top:10px"></audio><div id="rdNow" style="color:var(--mut);margin:6px 0"></div><div id="rdL"></div></div></section>
+<section data-t="chess" data-n="♟ Шахматы"><div class="card"><div class="row" style="margin-top:0"><select id="chMode" class="s"><option value="ai">Против компьютера (ты белые)</option><option value="fr">Вдвоём на одном экране</option></select><button id="chNew">Новая партия</button></div><div id="chSt" style="margin:8px 0"></div><div id="chB"></div></div></section>
 <section data-t="ach" data-n="🏆 Достижения"><div class="card"><h2>Профиль</h2><input type="text" class="s" id="nick" placeholder="Никнейм (хранится только у тебя в браузере)"><div id="al" style="margin-top:12px"></div></div></section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 <script src="app.js"></script>
 </body></html>

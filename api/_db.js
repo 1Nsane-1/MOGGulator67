@@ -25,6 +25,7 @@ async function init() {
         id SERIAL PRIMARY KEY, user_id INT REFERENCES users(id), nick TEXT NOT NULL,
         text TEXT NOT NULL, created_at TIMESTAMPTZ DEFAULT now())`;
       await sql`CREATE TABLE IF NOT EXISTS ai_log (user_id INT, created_at TIMESTAMPTZ DEFAULT now())`;
+      await sql`CREATE TABLE IF NOT EXISTS user_data (user_id INT PRIMARY KEY REFERENCES users(id), data JSONB NOT NULL, updated_at TIMESTAMPTZ DEFAULT now())`;
     })();
     ready.catch(() => { ready = null; });
   }

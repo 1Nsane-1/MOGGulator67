@@ -30,3 +30,16 @@ input[type=password].s{font:inherit;padding:10px;border-radius:10px;border:1px s
 .mth{overflow-x:auto;overflow-y:hidden;padding:4px 0;text-align:center;font-size:1.15em}.hl{background:var(--hl);border-radius:6px;padding:0 4px}
 .stc{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--bd)}.num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ac);color:#fff;text-align:center;line-height:28px;font-weight:700}
 .stb{flex:1;min-width:0}.note{color:var(--mut);margin-bottom:4px}.arr{text-align:center;color:var(--ac)}.ans2{margin-top:14px;font-weight:700;color:var(--ac)}
+select.s{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.hb{display:flex;gap:6px;align-items:center}
+a.btn{background:var(--ac);color:#fff;text-decoration:none;border-radius:10px;padding:10px 16px;display:inline-block}
+#map{height:340px;border-radius:10px;margin-bottom:10px;z-index:0}#mapRes .h{font-family:inherit}
+#chB{display:grid;grid-template-columns:repeat(8,1fr);max-width:420px;margin:0 auto;border:2px solid var(--bd);border-radius:6px;overflow:hidden}
+.sq{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:min(8vw,42px);cursor:pointer;position:relative;user-select:none}
+.sq.l{background:#eed9b6}.sq.d{background:#b58863}.sq.sel{box-shadow:inset 0 0 0 3px var(--ac)}
+.sq.lg:after{content:"";position:absolute;width:26%;height:26%;border-radius:50%;background:rgba(108,76,245,.6)}
+.cw{color:#fff;text-shadow:0 0 2px #000,0 0 2px #000,0 0 1px #000}.cb{color:#111}
+.ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:10px}
+.ac{border:1px solid var(--bd);border-radius:12px;padding:10px;color:var(--mut)}.ac.ok{border-color:var(--ac);color:var(--tx);font-weight:600}
+.pb2{height:6px;border-radius:3px;background:var(--bd);margin:6px 0 2px}.pb2 i{display:block;height:100%;border-radius:3px;background:var(--ac)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ac);color:#fff;padding:10px 18px;border-radius:12px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3)}

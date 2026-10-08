@@ -172,10 +172,10 @@ async function api(p,o){const r=await fetch(p,o),d=await r.json().catch(()=>({})
 const post=(p,b)=>api(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
 function chatUI(){$('cauth').style.display=me?'none':'block';$('cbox').style.display=me?'block':'none';if(me){$('cwho').textContent=me.nick;pull()}}
 async function loadMe(){try{me=(await api('/api/auth?action=me')).user}catch(e){me=null}chatUI()}
-function authDo(a){$('cerr').textContent='';post('/api/auth?action='+a,{nick:$('cn').value.trim(),password:$('cp').value})
- .then(d=>{me=d.user;lastId=0;$('cl').innerHTML='';$('cp').value='';stat('auth');chatUI()}).catch(e=>$('cerr').textContent=e.message)}
+function authDo(a){$('cerr').textContent='';post('/api/auth?action='+a,{nick:$('cn').value.trim(),password:$('cpw').value})
+ .then(d=>{me=d.user;lastId=0;$('cl').innerHTML='';$('cpw').value='';stat('auth');chatUI()}).catch(e=>$('cerr').textContent=e.message)}
 $('clog').onclick=()=>authDo('login');$('creg').onclick=()=>authDo('register');
-$('cp').onkeydown=e=>{if(e.key=='Enter')authDo('login')};
+$('cpw').onkeydown=e=>{if(e.key=='Enter')authDo('login')};
 $('cout').onclick=async()=>{try{await post('/api/auth?action=logout',{})}catch(e){}me=null;lastId=0;$('cl').innerHTML='';chatUI()};
 async function pull(){if(!me)return;try{const d=await api('/api/messages?after='+lastId),box=$('cl'),down=box.scrollTop+box.clientHeight>=box.scrollHeight-30||!lastId;
  d.messages.forEach(m=>{const el=document.createElement('div');el.className='m'+(m.nick==me.nick?' me':'');

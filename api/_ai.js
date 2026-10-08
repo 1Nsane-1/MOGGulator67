@@ -53,8 +53,14 @@ async function callOpenAI({ system, messages, max_tokens }) {
     headers: { 'content-type': 'application/json', authorization: 'Bearer ' + process.env.AI_API_KEY },
     body: JSON.stringify({ model: process.env.AI_MODEL, max_tokens, messages: [{ role: 'system', content: system }, ...conv] }),
   });
-  const d = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error((d.error && (d.error.message || d.error)) || 'AI API ' + r.status);
+  const raw = await r.text();
+  let d = {};
+  try { d = JSON.parse(raw); } catch (e) {}
+  if (!r.ok) {
+    const e0 = Array.isArray(d) ? d[0] : d; // Gemini иногда возвращает ошибку массивом
+    const msg = (e0 && e0.error && (e0.error.message || JSON.stringify(e0.error))) || raw.slice(0, 300);
+    throw new Error(`AI API ${r.status} (${process.env.AI_MODEL} @ ${base}): ${msg}`);
+  }
   return (d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content) || '';
 }
 module.exports = { guard, claude };

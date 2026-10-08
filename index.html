@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MOGGулятор67</title>
+<link rel="stylesheet" href="style.css">
+</head><body><main>
+<h1>MOGG<span>улятор</span>67</h1>
+<p class="sub">Сфотографируй пример — получи ответ и пошаговое решение.</p>
+
+<nav id="tabs"></nav>
+<section data-t="calc" data-n="🧮 Решатель"><div class="card"><h2>1. Фото примера</h2>
+<div id="drop">📷 Нажми, чтобы выбрать фото, или перетащи сюда</div>
+<input id="file" type="file" accept="image/*" hidden>
+<img id="prev" alt="Предпросмотр">
+<div class="row"><button id="ocr" disabled>Распознать</button></div>
+<div id="msg"></div></div>
+
+<div class="card"><h2>2. Выражение</h2>
+<input id="expr" type="text" placeholder="например: (2+3)*4^2 - 10/5" autocomplete="off" spellcheck="false">
+<div class="row"><button id="calc">Решить</button><button class="g" id="clr">Очистить</button></div>
+<div id="out"></div></div>
+
+<div class="card"><h2>История</h2><div id="hist"></div>
+<div class="row"><button class="g" id="hclr">Очистить историю</button></div></div>
+</section>
+<section data-t="time" data-n="⏰ Время"><div class="card"><div class="big" id="clk"></div>
+<h2>Будильник</h2><input type="time" id="alt"> <button id="alset">Поставить</button> <span id="alst"></span>
+<h2 style="margin-top:16px">Секундомер</h2><div class="big" id="sw">0:00.0</div>
+<div class="row"><button id="sws">Старт</button><button class="g" id="swr">Сброс</button></div></div></section>
+<section data-t="nav" data-n="🧭 Компас и карта"><div class="card"><h2>Компас</h2><div id="arrow"></div><div class="big" id="hd">—</div>
+<div class="row"><button id="cmp">Включить компас</button></div><div id="cmsg" style="color:var(--mut)"></div></div>
+<div class="card"><h2>Навигатор и погода</h2><div class="row"><button id="geo">Где я?</button></div><div id="gout" style="margin-top:10px"></div>
+<div class="row"><input type="text" class="s" id="dest" placeholder="Куда проложить маршрут?" style="flex:1"><button id="route">Маршрут</button></div>
+<p id="mlinks"></p><small style="color:var(--mut)">Карты и погода открываются в новой вкладке: внутри приложения интернет-запросы закрыты.</small></div></section>
+<section data-t="tools" data-n="🎲 Инструменты"><div class="card"><h2>Счётчик</h2><div class="big" id="cnt">0</div>
+<div class="row"><button id="cm">−</button><button id="cp">+</button><button class="g" id="cz">0</button></div></div>
+<div class="card"><h2>Рандомайзер</h2><input type="number" id="rmin" value="1" style="width:90px"> – <input type="number" id="rmax" value="100" style="width:90px">
+<div class="row"><button id="rn">Число</button><button id="rq">Случайный пример</button></div><div class="big" id="rout"></div></div>
+<div class="card"><h2>Диктофон</h2><div class="row"><button id="rec">● Запись</button></div><div id="recs"></div></div></section>
+<section data-t="notes" data-n="📝 Заметки"><div class="card"><textarea id="nt" placeholder="Новая заметка"></textarea><div class="row"><button id="nadd">Сохранить</button></div><div id="nl"></div></div></section>
+<section data-t="ach" data-n="🏆 Достижения"><div class="card"><h2>Профиль</h2><input type="text" class="s" id="nick" placeholder="Никнейм (хранится только у тебя в браузере)"><div id="al" style="margin-top:12px"></div></div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script src="app.js"></script>
+</body></html>

@@ -23,3 +23,6 @@ section{display:none}section.on{display:block}.big{font:700 40px ui-monospace,Me
 textarea,input[type=number],input[type=time],input[type=text].s{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}textarea{width:100%;min-height:80px}
 #arrow{width:140px;height:140px;margin:0 auto;border:3px solid var(--bd);border-radius:50%;position:relative;transition:transform .2s}#arrow:after{content:"▲";position:absolute;left:0;right:0;top:6px;text-align:center;color:var(--err);font-size:34px}
 a{color:var(--ac)}.ach{padding:6px 0;color:var(--mut)}.ach.ok{color:var(--tx);font-weight:600}
+input[type=password].s{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+#cl{height:320px;overflow-y:auto;border:1px solid var(--bd);border-radius:10px;padding:8px;margin-bottom:8px;background:var(--bg)}
+.m{padding:3px 0;word-break:break-word}.m b{color:var(--mut)}.m.me b{color:var(--ac)}.m small{color:var(--mut);margin-left:6px}

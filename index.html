@@ -38,6 +38,12 @@
 <div class="row"><button id="rn">Число</button><button id="rq">Случайный пример</button></div><div class="big" id="rout"></div></div>
 <div class="card"><h2>Диктофон</h2><div class="row"><button id="rec">● Запись</button></div><div id="recs"></div></div></section>
 <section data-t="notes" data-n="📝 Заметки"><div class="card"><textarea id="nt" placeholder="Новая заметка"></textarea><div class="row"><button id="nadd">Сохранить</button></div><div id="nl"></div></div></section>
+<section data-t="chat" data-n="💬 Чат"><div class="card" id="cauth"><h2>Вход в чат</h2>
+<p style="color:var(--mut);margin-top:0">Нужны только ник и пароль. Никаких личных данных мы не собираем.</p>
+<div class="row" style="margin-top:0"><input type="text" class="s" id="cn" placeholder="Ник" maxlength="20" autocomplete="username"><input type="password" class="s" id="cp" placeholder="Пароль (от 6 символов)" autocomplete="current-password"></div>
+<div class="row"><button id="clog">Войти</button><button class="g" id="creg">Зарегистрироваться</button></div><p class="err" id="cerr"></p></div>
+<div class="card" id="cbox" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px"><span>Ты: <b id="cwho"></b></span><button class="g" id="cout">Выйти</button></div>
+<div id="cl"></div><div class="row"><input type="text" class="s" id="ci" maxlength="500" placeholder="Сообщение…" style="flex:1;min-width:0"><button id="cs">Отправить</button></div></div></section>
 <section data-t="ach" data-n="🏆 Достижения"><div class="card"><h2>Профиль</h2><input type="text" class="s" id="nick" placeholder="Никнейм (хранится только у тебя в браузере)"><div id="al" style="margin-top:12px"></div></div></section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>

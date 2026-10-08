@@ -102,7 +102,7 @@ const AL=[
 ['photo',1,'Первое фото примера'],['photo',5,'Фотограф: 5 снимков'],['ocr',1,'Запустил OCR'],
 ['hre',1,'Вернулся к старому примеру'],['hclr',1,'Чистая история'],
 ['note',1,'Первая заметка'],['note',5,'Блокнотный человек: 5 заметок'],['notes',10,'10 заметок одновременно'],
-['cmp',1,'Компас включён'],['geo',1,'Нашёл себя на карте'],['wx',1,'Узнал погоду у себя'],['route',1,'Проложил маршрут'],
+['cmp',1,'Компас включён'],['geo',1,'Нашёл себя на карте'],['wx',1,'Узнал погоду у себя'],['auth',1,'Завёл аккаунт'],['msg',1,'Первое сообщение в чате'],['msg',25,'Болтун: 25 сообщений'],['route',1,'Проложил маршрут'],
 ['rec',1,'Первая запись диктофона'],['rec',5,'Подкастер: 5 записей'],
 ['sw',1,'Запустил секундомер'],['alarm',1,'Поставил будильник'],
 ['rnd',1,'Первый рандом'],['rnd',5,'5 бросков судьбы'],['rnd',25,'Игрок в кости: 25 бросков'],['rq',1,'Случайный пример'],['rq',10,'Генератор пыток: 10 примеров'],
@@ -166,6 +166,27 @@ let mr=null,ch=[];$('rec').onclick=async()=>{if(mr){mr.stop();return}try{
 let N=ld('m67nt',[]);function drawN(){$('nl').innerHTML=N.map((t,i)=>`<div class="h" data-i="${i}"><span style="white-space:pre-wrap;font-family:inherit">${t.replace(/[<>&]/g,'')}</span><span>✕</span></div>`).join('')}
 $('nadd').onclick=()=>{const t=$('nt').value.trim();if(!t)return;N.unshift(t);sv('m67nt',N);$('nt').value='';drawN();stat('note');stat('notes',N.length)};
 $('nl').onclick=e=>{const d=e.target.closest('.h');if(d){N.splice(d.dataset.i,1);sv('m67nt',N);drawN()}};
+// чат и аккаунты (серверные функции /api/auth и /api/messages)
+let me=null,lastId=0;
+async function api(p,o){const r=await fetch(p,o),d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Ошибка '+r.status);return d}
+const post=(p,b)=>api(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
+function chatUI(){$('cauth').style.display=me?'none':'block';$('cbox').style.display=me?'block':'none';if(me){$('cwho').textContent=me.nick;pull()}}
+async function loadMe(){try{me=(await api('/api/auth?action=me')).user}catch(e){me=null}chatUI()}
+function authDo(a){$('cerr').textContent='';post('/api/auth?action='+a,{nick:$('cn').value.trim(),password:$('cp').value})
+ .then(d=>{me=d.user;lastId=0;$('cl').innerHTML='';$('cp').value='';stat('auth');chatUI()}).catch(e=>$('cerr').textContent=e.message)}
+$('clog').onclick=()=>authDo('login');$('creg').onclick=()=>authDo('register');
+$('cp').onkeydown=e=>{if(e.key=='Enter')authDo('login')};
+$('cout').onclick=async()=>{try{await post('/api/auth?action=logout',{})}catch(e){}me=null;lastId=0;$('cl').innerHTML='';chatUI()};
+async function pull(){if(!me)return;try{const d=await api('/api/messages?after='+lastId),box=$('cl'),down=box.scrollTop+box.clientHeight>=box.scrollHeight-30||!lastId;
+ d.messages.forEach(m=>{const el=document.createElement('div');el.className='m'+(m.nick==me.nick?' me':'');
+  const b=document.createElement('b');b.textContent=m.nick+': ';const t=document.createElement('span');t.textContent=m.text;
+  const s=document.createElement('small');s.textContent=new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  el.append(b,t,s);box.append(el);lastId=m.id});if(d.messages.length&&down)box.scrollTop=box.scrollHeight}
+ catch(e){if(e.message=='Нужно войти'){me=null;chatUI()}}}
+async function sendMsg(){const t=$('ci').value.trim();if(!t)return;try{await post('/api/messages',{text:t});$('ci').value='';stat('msg');pull()}catch(e){$('cerr').textContent=e.message;alert(e.message)}}
+$('cs').onclick=sendMsg;$('ci').onkeydown=e=>{if(e.key=='Enter')sendMsg()};
+setInterval(()=>{if(document.querySelector('section[data-t=chat]').classList.contains('on'))pull()},3000);
+loadMe();
 function track(s,st,res){stat('steps',st.length);const m={add:/\+/,sub:/-/,mul:/\*/,div:/\//,pow:/\^/,par:/\(/};
  for(const k in m)if(m[k].test(s))stat(k);if(/^-|[(*\/^+-]-/.test(s))stat('neg');if(/\d\.\d/.test(s))stat('dec');
  if(res<0)stat('negr');if(res===0)stat('zero');if(Math.abs(res)>=1000)stat('big');if(res===67)stat('sixseven')}

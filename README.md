@@ -1,11 +1,14 @@
 # MOGGулятор67
 
 Запуск в VS Code:
+
 1. Открой папку проекта (File → Open Folder).
-2. Установи расширение **Live Server**, ПКМ по `index.html` → *Open with Live Server*.
+2. Установи расширение **Live Server**, ПКМ по `index.html` → _Open with Live Server_.
    Либо в терминале: `npx serve .` и открой адрес из консоли.
 3. Нужен интернет: Tesseract.js при первом запуске скачивает данные языка (~10 МБ).
 
 Файлы: `index.html` (разметка), `style.css` (стили), `app.js` (парсер, пошаговое решение, OCR, вкладки, ачивки).
 OCR читает печатный текст в строку. Дроби «в два этажа» и переменные (n, m) не поддерживаются.
+https://moggulator67.vercel.app
+
 # MOGGulator67

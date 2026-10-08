@@ -102,7 +102,7 @@ const AL=[
 ['photo',1,'Первое фото примера'],['photo',5,'Фотограф: 5 снимков'],['ocr',1,'Запустил OCR'],
 ['hre',1,'Вернулся к старому примеру'],['hclr',1,'Чистая история'],
 ['note',1,'Первая заметка'],['note',5,'Блокнотный человек: 5 заметок'],['notes',10,'10 заметок одновременно'],
-['cmp',1,'Компас включён'],['geo',1,'Нашёл себя на карте'],['route',1,'Проложил маршрут'],
+['cmp',1,'Компас включён'],['geo',1,'Нашёл себя на карте'],['wx',1,'Узнал погоду у себя'],['route',1,'Проложил маршрут'],
 ['rec',1,'Первая запись диктофона'],['rec',5,'Подкастер: 5 записей'],
 ['sw',1,'Запустил секундомер'],['alarm',1,'Поставил будильник'],
 ['rnd',1,'Первый рандом'],['rnd',5,'5 бросков судьбы'],['rnd',25,'Игрок в кости: 25 бросков'],['rq',1,'Случайный пример'],['rq',10,'Генератор пыток: 10 примеров'],
@@ -133,10 +133,18 @@ $('cmp').onclick=async()=>{try{
  const h=e=>{const a=e.webkitCompassHeading??(e.alpha==null?null:(360-e.alpha)%360);if(a==null)return;$('arrow').style.transform=`rotate(${-a}deg)`;
   const D=['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'];$('hd').textContent=Math.round(a)+'° '+D[Math.round(a/45)%8];stat('cmp')};
  addEventListener('deviceorientationabsolute',h,true);addEventListener('deviceorientation',h,true);$('cmsg').textContent='Работает на телефонах с датчиком. На компьютере стрелка не двигается.'}catch(e){$('cmsg').textContent='Нет доступа к датчику ориентации.'}};
+// погода через серверную функцию /api/weather
+const WC=[[[0],'☀️ Ясно'],[[1,2],'🌤 Малооблачно'],[[3],'☁️ Пасмурно'],[[45,48],'🌫 Туман'],[[51,53,55,56,57],'🌦 Морось'],[[61,63,65,66,67],'🌧 Дождь'],[[71,73,75,77],'🌨 Снег'],[[80,81,82],'🌧 Ливень'],[[85,86],'🌨 Снегопад'],[[95,96,99],'⛈ Гроза']];
+async function wx(la,lo){const o=$('mlinks');const box=$('wxout')||(o.insertAdjacentHTML('beforebegin','<div id="wxout" style="margin:10px 0"></div>'),$('wxout'));
+ box.textContent='Загружаю погоду…';
+ try{const r=await fetch(`/api/weather?lat=${la}&lon=${lo}`),d=await r.json();if(!r.ok)throw new Error(d.error||r.status);
+  const w=(WC.find(([c])=>c.includes(d.code))||[0,'Погода'])[1];
+  box.innerHTML=`<b>${w}</b>, ${Math.round(d.temp)}°C (ощущается ${Math.round(d.feels)}°)<br><small style="color:var(--mut)">сегодня ${Math.round(d.min)}…${Math.round(d.max)}°C · ветер ${Math.round(d.wind)} км/ч · влажность ${d.humidity}%</small>`;stat('wx')}
+ catch(e){box.textContent='Погода недоступна: '+e.message+' (локально через Live Server /api не работает — используй npx vercel dev)'}}
 // навигатор
 let pos=null;
 $('geo').onclick=()=>{if(!navigator.geolocation){$('gout').textContent='Геолокация недоступна';return}
- navigator.geolocation.getCurrentPosition(r=>{pos=r.coords;const la=pos.latitude.toFixed(5),lo=pos.longitude.toFixed(5);stat('geo');
+ navigator.geolocation.getCurrentPosition(r=>{pos=r.coords;const la=pos.latitude.toFixed(5),lo=pos.longitude.toFixed(5);stat('geo');wx(la,lo);
   $('gout').innerHTML=`📍 ${la}, ${lo} (±${Math.round(pos.accuracy)} м)`;
   $('mlinks').innerHTML=`<a target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=${la}&mlon=${lo}&zoom=16">Открыть на карте</a> · <a target="_blank" rel="noopener" href="https://yandex.ru/pogoda/?lat=${la}&lon=${lo}">Погода здесь</a>`},
  ()=>$('gout').textContent='Не удалось получить местоположение (проверь разрешение).')};

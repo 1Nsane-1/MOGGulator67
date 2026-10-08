@@ -18,7 +18,7 @@ mark{background:var(--hl);color:inherit;border-radius:4px;padding:0 3px}
 .ans{font-size:26px;font-weight:700;color:var(--ac);margin-top:10px}.err{color:var(--err)}
 .h{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd);cursor:pointer;font-family:ui-monospace,Menlo,Consolas,monospace}
 .h:last-child{border:0}#msg{color:var(--mut);font-size:14px;margin-top:8px}
-#tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px}#tabs button{background:var(--card);color:var(--tx);border:1px solid var(--bd);white-space:nowrap}#tabs button.on{background:var(--ac);color:#fff}
+#tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}#tabs button{background:var(--card);color:var(--tx);border:1px solid var(--bd);white-space:nowrap}#tabs button.on{background:var(--ac);color:#fff}
 section{display:none}section.on{display:block}.big{font:700 40px ui-monospace,Menlo,Consolas,monospace;text-align:center;margin:6px 0}
 textarea,input[type=number],input[type=time],input[type=text].s{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}textarea{width:100%;min-height:80px}
 #arrow{width:140px;height:140px;margin:0 auto;border:3px solid var(--bd);border-radius:50%;position:relative;transition:transform .2s}#arrow:after{content:"▲";position:absolute;left:0;right:0;top:6px;text-align:center;color:var(--err);font-size:34px}
